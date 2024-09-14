@@ -1,8 +1,4 @@
-doctype html
-html(lang="en")
-    head
-        meta(charset="UTF-8")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        title #{title}
-    body 
-        h1 Trang chủ đề bài hát
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+block content
+    +box-head('Danh sách chủ đề')
