@@ -1,10 +1,12 @@
 import express,{Express, Request, Response} from 'express';
-import { title } from 'process';
+import dotenv from 'dotenv';//Nhúng dotenv từ module dotenv
+dotenv.config();//Thêm config cho dotenv
 
 const app: Express = express();
-const port :number = 3000;
+const port : number | string =process.env.PORT ||3000;
 
-
+import connectDatabase from './config/database';
+connectDatabase();
 
 //Phần view engine -> Để render file pug (Quan trọng phải có)
 app.set('views', `${__dirname}/views`);
