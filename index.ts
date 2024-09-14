@@ -12,14 +12,8 @@ connectDatabase();
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'pug');
 
-import Topic from './model/topics.model';
-app.get('/topics',async(req: Request, res:Response)=>{
-    const topics = await Topic.find({deleted: false});
-    console.log(topics);
-    res.render('client/pages/topics/index', {
-        title:'Trang chủ đề bài hát'
-    })
-});
+import routeClient from './routes/client/index.route';
+routeClient(app);
 
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`);
