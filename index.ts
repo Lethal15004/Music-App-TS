@@ -11,6 +11,7 @@ connectDatabase();
 //Phần view engine -> Để render file pug (Quan trọng phải có)
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'pug');
+app.use(express.static(`${__dirname}/public`));//Định tuyến file tĩnh (Quan trọng phải có)
 
 import routeClient from './routes/client/index.route';
 routeClient(app);
