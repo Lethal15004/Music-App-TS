@@ -28,6 +28,40 @@ if(aplayer){
         avatar2.style.animationPlayState='paused';
     });
 }
-
-
 //End Aplayer
+
+
+//Start Event like
+const likeButton=document.querySelector('[button-like]');
+if(likeButton){
+    likeButton.addEventListener('click',(e)=>{
+        const id=likeButton.getAttribute('button-like');
+        const data={
+            id: id,
+        }
+        if(likeButton.classList.contains('active')){
+            likeButton.classList.remove('active');
+            data.type='dislike';
+        }else{
+            likeButton.classList.add('active');
+            data.type='like';
+        }
+        fetch('/songs/like',{
+            method:'PATCH',
+            headers:{
+                'Content-Type': 'application/json',
+            },
+            body:JSON.stringify(data)
+        })
+        .then(res=>res.json())
+        .then(data=>{
+            if(data.code===200){
+            const newNumberLike=likeButton.querySelector('.inner-number');
+            newNumberLike.innerHTML=data.updateSongLike + ' thích';
+           }else{
+            console.log('Error')
+           }
+        })
+    })
+}
+//End Event like

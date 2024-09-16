@@ -51,3 +51,32 @@ export const detail = async(req: Request, res: Response) =>{
         topic:topic
     })
 }
+
+export const like = async(req: Request, res: Response) =>{
+    const {id,type} = req.body;
+    const song = await Song.findOne({
+        _id:id,
+        deleted:false,
+        status:'active'
+    }).select('like');
+
+    let updateSongLike:number=song.like;
+    if(type==='like'){
+        updateSongLike=song.like+1;
+    }else{
+        updateSongLike=song.like-1;
+    }
+    await Song.updateOne({_id:id,status:'active',deleted:false},{
+        like:updateSongLike
+    })
+    //Nếu người dùng xóa phần active trong frontend thì có thể tăng like vĩnh viễn
+    //Nên là làm phần đăng nhập và đăng ký, phải đăng nhập mới có thể like 
+    //Chuyển like trong model của song thành mảng chứa id của user đã like
+    //Khi vào 1 bài hát thì kiểm tra id user thông qua res.locals.user có nằm trong like hay không
+
+    res.json({
+        code:200,
+        updateSongLike:updateSongLike,
+        message:'Like thành công'
+    })
+}
