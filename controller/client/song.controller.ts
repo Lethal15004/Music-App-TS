@@ -22,3 +22,32 @@ export const list = async(req: Request, res: Response) =>{
         songs:songs
     })
 }
+
+export const detail = async(req: Request, res: Response) =>{
+    const slugSong : string = req.params.slugSong;
+    const song = await Song.findOne({
+        slug: slugSong,
+        deleted: false,
+        status:'active'
+    })
+    let singer;
+    let topic;
+    try {
+        singer= await Singer.findOne({
+            _id:song.singerId
+        }).select('fullName');
+    
+        topic=await Topic.findOne({
+            _id:song.topicId
+        }).select('title');
+    } catch (error) {
+        res.redirect('/topics');
+    }
+
+    res.render('client/pages/songs/detail',{
+        title:'Chi tiết bài hát',
+        song:song,
+        singer:singer,
+        topic:topic
+    })
+}
