@@ -65,3 +65,37 @@ if(likeButton){
     })
 }
 //End Event like
+
+//Start Event favorite
+
+const favoriteButton=document.querySelector('[button-favorite]');
+if(favoriteButton){
+    favoriteButton.addEventListener('click',(e)=>{
+        const id=favoriteButton.getAttribute('button-favorite');
+
+        const data={
+            id: id
+        }
+        favoriteButton.classList.toggle('active');
+        fetch('/songs/favorite',{
+            method:'PATCH',
+            headers:{
+                'Content-Type': 'application/json',
+            },
+            body:JSON.stringify(data)
+        })
+        .then(res=>res.json())
+        .then(data=>{
+            if(data.code===200){
+                if(data.status==='add'){
+                    favoriteButton.classList.add('active');
+                }else{
+                    favoriteButton.classList.remove('active');
+                }
+                
+            }
+        })
+    })
+}
+
+//End Event favorite

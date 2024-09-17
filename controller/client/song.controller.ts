@@ -2,6 +2,7 @@ import { Request,Response } from "express";
 import Topic from "../../model/topics.model";
 import Song from "../../model/song.model";
 import Singer from "../../model/singer.model";
+import FavoriteSong from "../../model/favorite-song.mode";
 
 export const list = async(req: Request, res: Response) =>{
     const slugTopic : string = req.params.slugTopics;
@@ -29,7 +30,23 @@ export const detail = async(req: Request, res: Response) =>{
         slug: slugSong,
         deleted: false,
         status:'active'
-    })
+    });
+    let existFavoriteSong;
+    try {
+        existFavoriteSong = await FavoriteSong.findOne({
+            //userId:res.locals.user.id,
+            songId:song.id
+        });
+    } catch (error) {
+        res.json({
+            code:500,
+            message:'Lỗi server'
+        })
+    }
+    if(existFavoriteSong){
+        song['isFavorite'] = true
+    }
+
     let singer;
     let topic;
     try {
@@ -79,4 +96,50 @@ export const like = async(req: Request, res: Response) =>{
         updateSongLike:updateSongLike,
         message:'Like thành công'
     })
+}
+
+export const favorite = async(req: Request, res: Response) =>{
+    const {id}=req.body;
+    const data={
+        //userId:res.locals.user.id,
+        songId:id
+    }
+    let existFavoriteSong;
+    try {
+        existFavoriteSong=await FavoriteSong.findOne(data);
+    } catch (error) {
+        res.json({
+            code:500,
+            message:'Lỗi server'
+        })
+    }
+    if(existFavoriteSong){
+        await FavoriteSong.updateOne({
+            //userId:res.locals.user.id,
+        },{
+            $pull:{
+                songId:id
+            }
+        })
+        res.json({
+            code:200,
+            message:'Xóa khỏi yêu thích thành công',
+            status:''
+        })
+        return;
+    }else{
+        await FavoriteSong.updateOne({
+            //userId:res.locals.user.id,
+        },{
+            $push:{
+                songId:id
+            }
+        })
+        res.json({
+            code:200,
+            message:'Thêm vào yêu thích thành công',
+            status:'add'
+        })
+    }
+    
 }
