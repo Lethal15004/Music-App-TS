@@ -84,3 +84,22 @@ export const login= async(req: Request, res: Response)=>{
     req.flash('success','Đăng nhập thành công');
     res.redirect('/topics');
 }
+
+export const logout= async(req: Request, res: Response)=>{
+    try {
+        await User.updateOne({
+            tokenUser:req.cookies.tokenUser,
+            status:'active',
+            deleted:false
+         },{
+              statusOnline:'offline'
+         })
+    } catch (error) {
+        req.flash('error','Lỗi chưa đăng nhập');
+        res.redirect('/user/login');
+        return;
+    }
+    res.clearCookie('tokenUser');
+    req.flash('success','Đăng xuất thành công');
+    res.redirect('/topics');
+}
