@@ -1,10 +1,15 @@
-import express,{Express, Request, Response} from 'express';
+import express,{Express, Request, Response,NextFunction} from 'express';
 import dotenv from 'dotenv';//Nhúng dotenv từ module dotenv
 import bodyParser from'body-parser';//Nhúng body-parser từ module body-parser
 dotenv.config();//Thêm config cho dotenv
 
+import flash from 'connect-flash';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+
 const app: Express = express();
 const port : number | string =process.env.PORT ||3000;
+
 
 import connectDatabase from './config/database';
 connectDatabase();
@@ -17,6 +22,22 @@ app.use(express.static(`${__dirname}/public`));//Định tuyến file tĩnh (Qua
 //Nhúng body-parser vào dự án
 app.use(bodyParser.urlencoded({ extended: false }))//Nhận dữ liệu từ form
 app.use(bodyParser.json());//Nhận dữ liệu từ fetch
+
+//Phần flash -> Để hiển thị thông báo (Quan trọng phải có)
+app.use(cookieParser('alert-1x2'));
+app.use(session(
+    {   secret: 'some secret', // Thay thế bằng một khóa bí mật mạnh
+        resave: false,
+        cookie: { maxAge: 20*60*1000 },
+        saveUninitialized:true
+    }
+));
+app.use(flash());
+//Middleware để truyền biến messages vào tất cả các view
+app.use((req:Request, res:Response,next:NextFunction)=>{
+    res.locals.messages = req.flash();
+    next();
+})
 
 
 import routeClient from './routes/client/index.route';

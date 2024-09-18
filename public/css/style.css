@@ -1,3 +1,13 @@
+/* Body */
+.body .main {
+  margin: 15px;
+  position: relative;
+  left: 150px;
+  width: calc(100% - 180px);
+  }
+/* Body */
+
+
 /* Header */
 .header {
     border-bottom: 1px solid #ddd;
@@ -262,3 +272,17 @@
   padding: 10px 15px;
 }
 /* End singer-detail */
+
+
+/* Alert */
+.show-alert {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  z-index: 999;
+}
+
+.show-alert.hidden {
+  display: none;
+}
+/* Alert */
