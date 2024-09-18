@@ -57,7 +57,7 @@ export const login= async(req: Request, res: Response)=>{
     const user = await User.findOne({
         email:email,
         deleted:false,
-    })
+    }).select('fullName email phone avatar');
     if(!user){
         req.flash('error','Tài khoản không tồn tại');
         res.redirect('back');

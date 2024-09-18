@@ -39,7 +39,6 @@ app.use((req:Request, res:Response,next:NextFunction)=>{
     next();
 })
 
-
 import routeClient from './routes/client/index.route';
 routeClient(app);
 

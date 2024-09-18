@@ -56,11 +56,15 @@ if(likeButton){
         .then(res=>res.json())
         .then(data=>{
             if(data.code===200){
-            const newNumberLike=likeButton.querySelector('.inner-number');
-            newNumberLike.innerHTML=data.updateSongLike + ' thích';
-           }else{
-            console.log('Error')
-           }
+                const newNumberLike=likeButton.querySelector('.inner-number');
+                newNumberLike.innerHTML=data.updateSongLike + ' thích';
+            }else{
+                Swal.fire({
+                    icon: "error",
+                    title: "Có lỗi xảy ra",
+                    text: data.message,
+                });
+            }
         })
     })
 }
@@ -76,7 +80,6 @@ if(favoriteButton){
         const data={
             id: id
         }
-        favoriteButton.classList.toggle('active');
         fetch('/songs/favorite',{
             method:'PATCH',
             headers:{
@@ -91,8 +94,13 @@ if(favoriteButton){
                     favoriteButton.classList.add('active');
                 }else{
                     favoriteButton.classList.remove('active');
-                }
-                
+                } 
+            }else{
+                Swal.fire({
+                    icon: "error",
+                    title: "Có lỗi xảy ra",
+                    text: data.message,
+                });
             }
         })
     })
