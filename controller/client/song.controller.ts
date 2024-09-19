@@ -189,5 +189,29 @@ export const listFavorite = async(req: Request, res: Response) =>{
         req.flash('error', 'Tài khoản không tồn tại');
         res.redirect('/user/login');
     }
-   
+}
+
+export const search = async(req: Request, res: Response) =>{
+    const keyword = `${req.query.keyword}`;
+    let songs = [];
+    if (keyword) {
+        const regex = new RegExp(keyword, 'i');
+        songs = await Song.find({
+            title: regex,
+            deleted: false,
+            status: "active"
+        }).select("title avatar singerId like slug");
+        for (const item of songs) {
+            const singerInfo = await Singer.findOne({
+              _id: item.singerId
+            }).select("fullName");
+        
+            item["singerFullName"] = singerInfo["fullName"];
+        }
+    }
+    res.render('client/pages/songs/list',{
+        title:'Kết quả tìm kiếm: '+keyword,
+        keyword:keyword,
+        songs:songs
+    })
 }

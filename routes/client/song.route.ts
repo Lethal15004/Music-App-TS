@@ -7,6 +7,8 @@ import * as requireAuth from '../../middleware/auth.middleware';
 router.get('/topic/:slugTopics',songController.list);
 router.get('/detail/:slugSong',songController.detail);
 
+router.get('/search',songController.search);
+
 router.get('/favorite',requireAuth.getMethod,songController.listFavorite);
 
 router.patch('/like',requireAuth.notGetMethod,songController.like);
