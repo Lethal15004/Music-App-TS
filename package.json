@@ -19,7 +19,8 @@
     "md5": "^2.3.0",
     "mongoose": "^8.6.2",
     "mongoose-slug-updater": "^3.3.0",
-    "pug": "^3.0.3"
+    "pug": "^3.0.3",
+    "unidecode": "^1.1.0"
   },
   "devDependencies": {
     "@types/connect-flash": "^0.0.40",

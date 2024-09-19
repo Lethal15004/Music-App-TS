@@ -4,6 +4,8 @@ import Song from "../../model/song.model";
 import Singer from "../../model/singer.model";
 import FavoriteSong from "../../model/favorite-song.model";
 
+import unidecode from 'unidecode';
+
 export const list = async(req: Request, res: Response) =>{
     const slugTopic : string = req.params.slugTopics;
     const topic = await Topic.findOne({slug: slugTopic,deleted: false,status:'active'}).select('id title');
@@ -195,9 +197,19 @@ export const search = async(req: Request, res: Response) =>{
     const keyword = `${req.query.keyword}`;
     let songs = [];
     if (keyword) {
-        const regex = new RegExp(keyword, 'i');
+        let keywordSlug;
+        keywordSlug = `${keyword.trim().replace(/\s/g,'-')}`;
+        keywordSlug = keywordSlug.replace(/-+/g, '-');
+        keywordSlug = unidecode(keywordSlug);
+        
+        const regexKeyWord = new RegExp(keyword, 'i');
+
+        const regexKeyWordSlug = new RegExp(keywordSlug, 'i');
         songs = await Song.find({
-            title: regex,
+            $or:[
+                {title:regexKeyWord},
+                {slug:regexKeyWordSlug}
+            ],
             deleted: false,
             status: "active"
         }).select("title avatar singerId like slug");
@@ -207,7 +219,9 @@ export const search = async(req: Request, res: Response) =>{
             }).select("fullName");
         
             item["singerFullName"] = singerInfo["fullName"];
+            item['likeCount']=item.like.length;
         }
+        
     }
     res.render('client/pages/songs/list',{
         title:'Kết quả tìm kiếm: '+keyword,
