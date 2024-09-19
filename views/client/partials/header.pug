@@ -13,9 +13,14 @@ header.header
               a(href="/") Trang chủ
             li
               a(href="/topics") Chủ đề
-            li 
-              a(href="/user/register") Đăng ký
-            li 
-              a(href="/user/login") Đăng nhập
-            li 
-              a(href="/user/logout") Đăng xuất
+            if(user)
+              li 
+                a(href="/user/profile") Chào #{user.fullName.trim().split(' ').reverse()[0]}
+              li 
+                a(href="/user/logout") Đăng xuất
+            else
+              li 
+                a(href="/user/register") Đăng ký
+              li 
+                a(href="/user/login") Đăng nhập
+            
