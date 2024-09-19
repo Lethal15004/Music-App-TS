@@ -115,3 +115,40 @@ if(alertSuccess){
         alertSuccess.classList.add('hidden');
     },time)
 }
+
+// Gợi ý tìm kiếm
+const boxSearch = document.querySelector('.box-search');
+if(boxSearch){
+    const inputSearch=boxSearch.querySelector('input[name="keyword');
+    inputSearch.addEventListener('keyup',(e)=>{
+        const keyword=inputSearch.value.trim();
+        fetch(`/songs/search/suggest?keyword=${keyword}`)
+        .then(res=>res.json())
+        .then(data=>{
+            if(data.code==200){
+                const htmlSong = data.songs.map(item => `
+                    <a class="inner-item" href="/songs/detail/${item.slug}">
+                      <div class="inner-image">
+                        <img src="${item.avatar}">
+                      </div>
+                      <div class="inner-info">
+                        <div class="inner-title">${item.title}</div>
+                        <div class="inner-singer">
+                          <i class="fa-solid fa-microphone-lines"></i> ${item.singerFullName}
+                        </div>
+                      </div>
+                    </a>
+                `);
+                const elementInnerSuggest =boxSearch.querySelector('.inner-suggest');
+                const elementInnerList=elementInnerSuggest.querySelector('.inner-list');
+                elementInnerList.innerHTML=htmlSong.join('');
+                if(data.songs.length > 0) {
+                    elementInnerSuggest.classList.add('show');
+                }else{
+                    elementInnerSuggest.classList.remove('show');
+                }
+            }
+        })
+    })
+}
+// Hết Gợi ý tìm kiếm

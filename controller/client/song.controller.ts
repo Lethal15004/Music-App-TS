@@ -194,8 +194,9 @@ export const listFavorite = async(req: Request, res: Response) =>{
 }
 
 export const search = async(req: Request, res: Response) =>{
+    const type : string =`${req.params.type}`;
     const keyword = `${req.query.keyword}`;
-    let songs = [];
+    let songsFinal = [];
     if (keyword) {
         let keywordSlug;
         keywordSlug = `${keyword.trim().replace(/\s/g,'-')}`;
@@ -205,7 +206,7 @@ export const search = async(req: Request, res: Response) =>{
         const regexKeyWord = new RegExp(keyword, 'i');
 
         const regexKeyWordSlug = new RegExp(keywordSlug, 'i');
-        songs = await Song.find({
+        const songs = await Song.find({
             $or:[
                 {title:regexKeyWord},
                 {slug:regexKeyWordSlug}
@@ -217,15 +218,34 @@ export const search = async(req: Request, res: Response) =>{
             const singerInfo = await Singer.findOne({
               _id: item.singerId
             }).select("fullName");
-        
-            item["singerFullName"] = singerInfo["fullName"];
-            item['likeCount']=item.like.length;
+
+            const itemFinal={
+                title:item.title,
+                avatar: item.avatar,
+                singerId:item.singerId,
+                singerFullName: singerInfo["fullName"],
+                likeCount:item.like.length,
+                slug: item.slug,
+            }
+            songsFinal.push(itemFinal);
         }
         
     }
-    res.render('client/pages/songs/list',{
-        title:'Kết quả tìm kiếm: '+keyword,
-        keyword:keyword,
-        songs:songs
-    })
+    if(type==='result'){
+        res.render('client/pages/songs/list',{
+            title:'Kết quả tìm kiếm: '+keyword,
+            keyword:keyword,
+            songs:songsFinal
+        });
+    }else if (type==='suggest'){
+        res.json({
+            code:200,
+            songs:songsFinal,
+        });
+    }else{
+        res.json({
+            code:400
+        })
+    }
+    
 }
