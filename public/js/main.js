@@ -39,13 +39,6 @@ if(likeButton){
         const data={
             id: id,
         }
-        if(likeButton.classList.contains('active')){
-            likeButton.classList.remove('active');
-            data.type='dislike';
-        }else{
-            likeButton.classList.add('active');
-            data.type='like';
-        }
         fetch('/songs/like',{
             method:'PATCH',
             headers:{
@@ -56,8 +49,14 @@ if(likeButton){
         .then(res=>res.json())
         .then(data=>{
             if(data.code===200){
+                if(data.status=='add'){
+                    likeButton.classList.add('active');
+                }
+                else{
+                    likeButton.classList.remove('active');
+                }
                 const newNumberLike=likeButton.querySelector('.inner-number');
-                newNumberLike.innerHTML=data.updateSongLike + ' thích';
+                newNumberLike.innerHTML=data.newLikeCount + ' thích';
             }else{
                 Swal.fire({
                     icon: "error",
@@ -76,7 +75,6 @@ const favoriteButton=document.querySelector('[button-favorite]');
 if(favoriteButton){
     favoriteButton.addEventListener('click',(e)=>{
         const id=favoriteButton.getAttribute('button-favorite');
-
         const data={
             id: id
         }

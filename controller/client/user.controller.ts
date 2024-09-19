@@ -1,6 +1,6 @@
 import { Request,Response } from "express";
 import User from "../../model/user.model";
-import FavoriteSong from "../../model/favorite-song.mode";
+import FavoriteSong from "../../model/favorite-song.model";
 import md5 from 'md5';
 
 import * as generateHelper from '../../helper/generateString.helper';

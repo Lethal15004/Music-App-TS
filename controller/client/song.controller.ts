@@ -2,7 +2,7 @@ import { Request,Response } from "express";
 import Topic from "../../model/topics.model";
 import Song from "../../model/song.model";
 import Singer from "../../model/singer.model";
-import FavoriteSong from "../../model/favorite-song.mode";
+import FavoriteSong from "../../model/favorite-song.model";
 
 export const list = async(req: Request, res: Response) =>{
     const slugTopic : string = req.params.slugTopics;
@@ -17,6 +17,7 @@ export const list = async(req: Request, res: Response) =>{
             _id:song.singerId,
         }).select('fullName');
         song['singerFullName']=singer.fullName;
+        song['likeCount']=song.like.length;
     }
     res.render('client/pages/songs/list',{
         title:topic.title,
@@ -31,22 +32,28 @@ export const detail = async(req: Request, res: Response) =>{
         deleted: false,
         status:'active'
     });
-    let existFavoriteSong;
-    try {
-        existFavoriteSong = await FavoriteSong.findOne({
-            //userId:res.locals.user.id,
-            songId:song.id
-        });
-    } catch (error) {
-        res.json({
-            code:500,
-            message:'Lỗi server'
-        })
-    }
-    if(existFavoriteSong){
-        song['isFavorite'] = true
-    }
 
+    if(res.locals.user){
+        const existLikeSong = song.like.find(user => user === res.locals.user.id);
+        try {
+            const existFavoriteSong = await FavoriteSong.findOne({
+                userId: res.locals.user.id,
+                songId:song.id
+            });
+            if(existFavoriteSong){
+                song['isFavorite'] = true
+            }
+            if(existLikeSong){
+                song['isLike'] = true
+            }
+        } catch (error) {
+            res.json({
+                code:500,
+                message:'Lỗi server'
+            })
+        } 
+    }
+    song['likeCount']=song.like.length;
     let singer;
     let topic;
     try {
@@ -60,7 +67,6 @@ export const detail = async(req: Request, res: Response) =>{
     } catch (error) {
         res.redirect('/topics');
     }
-
     res.render('client/pages/songs/detail',{
         title:'Chi tiết bài hát',
         song:song,
@@ -70,38 +76,54 @@ export const detail = async(req: Request, res: Response) =>{
 }
 
 export const like = async(req: Request, res: Response) =>{
-    const {id,type} = req.body;
-    const song = await Song.findOne({
-        _id:id,
-        deleted:false,
-        status:'active'
-    }).select('like');
+    const {id} = req.body;
+    try {
+        const song = await Song.findOne({
+            _id:id,
+            deleted:false,
+            status:'active',
+        }).select('like');
+        const userExist = song.like.find(user => user === res.locals.user.id);
 
-    let updateSongLike:number=song.like;
-    if(type==='like'){
-        updateSongLike=song.like+1;
-    }else{
-        updateSongLike=song.like-1;
+        let newLikeCount : number = song.like.length;
+        let status :string ='';
+        if(userExist){
+            await Song.updateOne({
+                _id:id
+            },{
+                $pull:{
+                    like:res.locals.user.id
+                }
+            })
+            --newLikeCount;
+        }else{
+            await Song.updateOne({
+                _id:id
+            },{
+                $push:{
+                    like:res.locals.user.id
+                }
+            })
+            status='add';
+            ++newLikeCount;
+        }
+        res.json({
+            code:200,
+            status:status,
+            newLikeCount:newLikeCount
+        })
+    } catch (error) {
+        res.json({
+            code:500,
+            message:'Lỗi server'
+        })
     }
-    await Song.updateOne({_id:id,status:'active',deleted:false},{
-        like:updateSongLike
-    })
-    //Nếu người dùng xóa phần active trong frontend thì có thể tăng like vĩnh viễn
-    //Nên là làm phần đăng nhập và đăng ký, phải đăng nhập mới có thể like 
-    //Chuyển like trong model của song thành mảng chứa id của user đã like
-    //Khi vào 1 bài hát thì kiểm tra id user thông qua res.locals.user có nằm trong like hay không
-
-    res.json({
-        code:200,
-        updateSongLike:updateSongLike,
-        message:'Like thành công'
-    })
 }
 
 export const favorite = async(req: Request, res: Response) =>{
     const {id}=req.body;
     const data={
-        //userId:res.locals.user.id,
+        userId:res.locals.user.id,
         songId:id
     }
     let existFavoriteSong;
@@ -113,33 +135,28 @@ export const favorite = async(req: Request, res: Response) =>{
             message:'Lỗi server'
         })
     }
+    let status :string='';
     if(existFavoriteSong){
         await FavoriteSong.updateOne({
-            //userId:res.locals.user.id,
+            userId:res.locals.user.id,
         },{
             $pull:{
                 songId:id
             }
         })
-        res.json({
-            code:200,
-            message:'Xóa khỏi yêu thích thành công',
-            status:''
-        })
-        return;
     }else{
         await FavoriteSong.updateOne({
-            //userId:res.locals.user.id,
+            userId:res.locals.user.id,
         },{
             $push:{
                 songId:id
             }
         })
-        res.json({
-            code:200,
-            message:'Thêm vào yêu thích thành công',
-            status:'add'
-        })
+        status='add';
     }
+    res.json({
+        code:200,
+        status:status
+    })
     
 }
