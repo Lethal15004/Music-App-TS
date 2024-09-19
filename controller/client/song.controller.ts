@@ -160,3 +160,34 @@ export const favorite = async(req: Request, res: Response) =>{
     })
     
 }
+
+export const listFavorite = async(req: Request, res: Response) =>{
+    try {
+        const userFavoriteList=await FavoriteSong.findOne({
+            userId:res.locals.user.id
+        })
+        const listSong=[];
+        for (const songId of userFavoriteList.songId){
+            const song={}
+            const infoSong = await Song.findOne({
+                _id:songId,
+                deleted:false,
+                status:'active'
+            }).select("title avatar singerId slug");
+            const infoSinger=await Singer.findOne({
+                _id:infoSong.singerId
+            }).select('fullName');
+            song['infoSong']=infoSong;
+            song['infoSinger']=infoSinger;
+            listSong.push(song);
+        }
+        res.render('client/pages/songs/favorite',{
+            title:'Bài hát yêu thích',
+            listSong:listSong
+        })
+    } catch (error) {
+        req.flash('error', 'Tài khoản không tồn tại');
+        res.redirect('/user/login');
+    }
+   
+}

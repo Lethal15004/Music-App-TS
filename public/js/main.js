@@ -71,35 +71,37 @@ if(likeButton){
 
 //Start Event favorite
 
-const favoriteButton=document.querySelector('[button-favorite]');
-if(favoriteButton){
-    favoriteButton.addEventListener('click',(e)=>{
-        const id=favoriteButton.getAttribute('button-favorite');
-        const data={
-            id: id
-        }
-        fetch('/songs/favorite',{
-            method:'PATCH',
-            headers:{
-                'Content-Type': 'application/json',
-            },
-            body:JSON.stringify(data)
-        })
-        .then(res=>res.json())
-        .then(data=>{
-            if(data.code===200){
-                if(data.status==='add'){
-                    favoriteButton.classList.add('active');
-                }else{
-                    favoriteButton.classList.remove('active');
-                } 
-            }else{
-                Swal.fire({
-                    icon: "error",
-                    title: "Có lỗi xảy ra",
-                    text: data.message,
-                });
+const listFavoriteButton=document.querySelectorAll('[button-favorite]');
+if(listFavoriteButton.length>0){
+    listFavoriteButton.forEach((favoriteButton)=>{
+        favoriteButton.addEventListener('click',(e)=>{
+            const id=favoriteButton.getAttribute('button-favorite');
+            const data={
+                id: id
             }
+            fetch('/songs/favorite',{
+                method:'PATCH',
+                headers:{
+                    'Content-Type': 'application/json',
+                },
+                body:JSON.stringify(data)
+            })
+            .then(res=>res.json())
+            .then(data=>{
+                if(data.code===200){
+                    if(data.status==='add'){
+                        favoriteButton.classList.add('active');
+                    }else{
+                        favoriteButton.classList.remove('active');
+                    } 
+                }else{
+                    Swal.fire({
+                        icon: "error",
+                        title: "Có lỗi xảy ra",
+                        text: data.message,
+                    });
+                }
+            })
         })
     })
 }

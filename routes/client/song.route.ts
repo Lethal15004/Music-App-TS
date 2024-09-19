@@ -2,11 +2,14 @@ import express from 'express';
 const router= express.Router();
 
 import * as songController from '../../controller/client/song.controller';
-import requireAuth from '../../middleware/auth.middleware';
+import * as requireAuth from '../../middleware/auth.middleware';
 
-router.get('/:slugTopics',songController.list);
+router.get('/topic/:slugTopics',songController.list);
 router.get('/detail/:slugSong',songController.detail);
-router.patch('/like',requireAuth,songController.like);
-router.patch('/favorite',requireAuth,songController.favorite);
+
+router.get('/favorite',requireAuth.getMethod,songController.listFavorite);
+
+router.patch('/like',requireAuth.notGetMethod,songController.like);
+router.patch('/favorite',requireAuth.notGetMethod,songController.favorite);
 
 export default router;
