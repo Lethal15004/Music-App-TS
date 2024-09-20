@@ -247,5 +247,32 @@ export const search = async(req: Request, res: Response) =>{
             code:400
         })
     }
-    
+}
+
+export const listen = async(req: Request, res: Response) =>{
+    try {
+        const id : string =`${req.params.id}`;
+        const song = await Song.findOne({
+            _id:id,
+            deleted:false,
+            status:'active'
+        })
+        const updateListen= song.listen +1;
+        await Song.updateOne({
+            _id:id,
+            deleted:false,
+            status:'active'
+        },{
+            listen:updateListen
+        })
+        res.json({
+            code:200,
+            listen:updateListen
+        })
+    } catch (error) {
+        res.json({
+            code:500,
+            message:'Lỗi server'
+        })
+    }
 }

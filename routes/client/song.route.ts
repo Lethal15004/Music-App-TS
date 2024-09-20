@@ -14,4 +14,6 @@ router.get('/favorite',requireAuth.getMethod,songController.listFavorite);
 router.patch('/like',requireAuth.notGetMethod,songController.like);
 router.patch('/favorite',requireAuth.notGetMethod,songController.favorite);
 
+router.get('/listen/:id',songController.listen)
+
 export default router;
