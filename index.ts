@@ -2,6 +2,7 @@ import express,{Express, Request, Response,NextFunction} from 'express';
 import dotenv from 'dotenv';//Nhúng dotenv từ module dotenv
 import bodyParser from'body-parser';//Nhúng body-parser từ module body-parser
 dotenv.config();//Thêm config cho dotenv
+import path from 'path';
 
 import flash from 'connect-flash';
 import cookieParser from 'cookie-parser';
@@ -16,6 +17,9 @@ import { systemConfig } from './config/system';
 
 import connectDatabase from './config/database';
 connectDatabase();
+
+//Phần tinymce -> Để sử dụng trình soạn thảo tinymce (Quan trọng phải có)
+app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
 
 //Phần view engine -> Để render file pug (Quan trọng phải có)
 app.set('views', `${__dirname}/views`);
