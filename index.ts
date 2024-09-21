@@ -10,6 +10,9 @@ import session from 'express-session';
 const app: Express = express();
 const port : number | string =process.env.PORT ||3000;
 
+import routeClient from './routes/client/index.route';
+import routeAdmin from './routes/admin/index.route';
+import { systemConfig } from './config/system';
 
 import connectDatabase from './config/database';
 connectDatabase();
@@ -38,9 +41,9 @@ app.use((req:Request, res:Response,next:NextFunction)=>{
     res.locals.messages = req.flash();
     next();
 })
-
-import routeClient from './routes/client/index.route';
+app.locals.prefixAdmin = systemConfig.prefixAdmin;//Truyền biến locals cho các router và file pug sử dụng
 routeClient(app);
+routeAdmin(app);
 
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`);
