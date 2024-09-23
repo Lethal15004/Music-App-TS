@@ -31,3 +31,10 @@ export const createPage = async (req:Request,res:Response)=>{
         singers:singers
     })
 }
+
+export const create = async (req:Request,res:Response)=>{
+    const newSong =new Song(req.body);
+    await newSong.save();
+    req.flash('success','Thêm mới bài hát thành công');
+    res.redirect('/admin/songs');
+}
