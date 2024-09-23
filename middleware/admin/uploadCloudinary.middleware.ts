@@ -15,3 +15,20 @@ export const uploadSingle= async (req:Request,res:Response,next:NextFunction)=>{
     } 
 
 }
+export const uploadFields=async(req:Request,res:Response,next:NextFunction)=>{
+  if(req['files']){
+    try{
+      for(const key in req['files']){
+        req.body[key] = [];
+        const array= req['files'][key];
+        for(const item of array){
+          let result = await streamUpload(item.buffer);
+          req.body[key].push(result['url']);
+        }
+      }
+      next();
+    }catch(error) {
+      console.log(error);
+    }
+  }
+}

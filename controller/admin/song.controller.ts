@@ -33,6 +33,13 @@ export const createPage = async (req:Request,res:Response)=>{
 }
 
 export const create = async (req:Request,res:Response)=>{
+    if(req.body.avatar){
+        req.body.avatar=req.body.avatar[0];
+    }
+    if(req.body.audio){
+        req.body.audio=req.body.audio[0];
+    }
+
     const newSong =new Song(req.body);
     await newSong.save();
     req.flash('success','Thêm mới bài hát thành công');
