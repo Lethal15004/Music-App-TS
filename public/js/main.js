@@ -5,13 +5,16 @@ if (aplayer) {
     dataSong = JSON.parse(dataSong);
     let dataSinger = aplayer.getAttribute('data-singer');
     dataSinger = JSON.parse(dataSinger);
+
     const ap = new APlayer({
         container: aplayer,
+        lrcType: 1,
         audio: [{
             name: dataSong.title,
             artist: dataSinger.fullName,
             url: dataSong.audio,
-            cover: dataSong.avatar
+            cover: dataSong.avatar,
+            lrc: dataSong.lyrics,
         }],
         autoplay: true // Lần đầu vào chi tiết bài nhạc sẽ phát còn reload lại thì không
     });
