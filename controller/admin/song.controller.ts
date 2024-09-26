@@ -77,12 +77,18 @@ export const editPage = async (req:Request,res:Response)=>{
 
 export const edit = async (req:Request,res:Response)=>{
     try{
-        const data=req.body;
         const id=req.params.id;
+        if(req.body.avatar){
+            req.body.avatar=req.body.avatar[0];
+        }
+        if(req.body.audio){
+            req.body.audio=req.body.audio[0];
+        }
+
         await Song.updateOne({
             _id:id,
             deleted:false
-        },data);
+        },req.body);
         req.flash('success','Cập nhật bài hát thành công');
         res.redirect('back');
     }catch{
