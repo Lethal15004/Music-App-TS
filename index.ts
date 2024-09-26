@@ -3,6 +3,7 @@ import dotenv from 'dotenv';//Nhúng dotenv từ module dotenv
 import bodyParser from'body-parser';//Nhúng body-parser từ module body-parser
 dotenv.config();//Thêm config cho dotenv
 import path from 'path';
+import methodOverride from 'method-override'; 
 
 import flash from 'connect-flash';
 import cookieParser from 'cookie-parser';
@@ -46,6 +47,9 @@ app.use((req:Request, res:Response,next:NextFunction)=>{
     next();
 })
 app.locals.prefixAdmin = systemConfig.prefixAdmin;//Truyền biến locals cho các router và file pug sử dụng
+
+app.use(methodOverride('_method'));
+
 routeClient(app);
 routeAdmin(app);
 

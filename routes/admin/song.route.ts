@@ -14,6 +14,12 @@ router.post(
     upload.fields([{name:'avatar',maxCount:1},{name:'audio',maxCount:1}]),
     uploadCloud.uploadFields,
     songController.create);
+router.get('/edit/:id',songController.editPage);
+router.patch(
+    '/edit/:id',
+    upload.fields([{name:'avatar',maxCount:1},{name:'audio',maxCount:1}]),
+    uploadCloud.uploadFields,
+    songController.edit);
 
 
 export default router;

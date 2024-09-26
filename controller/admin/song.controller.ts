@@ -45,3 +45,48 @@ export const create = async (req:Request,res:Response)=>{
     req.flash('success','Thêm mới bài hát thành công');
     res.redirect('/admin/songs');
 }
+
+export const editPage = async (req:Request,res:Response)=>{
+    try {
+        const id :string = req.params.id;
+        const song = await Song.findOne({
+            _id:id,
+            deleted:false
+        })
+        const topics = await Topic.find({
+            deleted:false,
+            status:'active'
+        }).select('title');
+        
+        const singers = await Singer.find({
+            deleted:false,
+            status:'active'
+        }).select('fullName');
+
+        res.render('admin/pages/song/edit',{
+            title:"Chỉnh sửa bài hát",
+            song:song,
+            topics:topics,
+            singers:singers
+        })
+    } catch (error) {
+        req.flash('error', "Lỗi server");
+        res.redirect('/admin/songs');
+    }
+}
+
+export const edit = async (req:Request,res:Response)=>{
+    try{
+        const data=req.body;
+        const id=req.params.id;
+        await Song.updateOne({
+            _id:id,
+            deleted:false
+        },data);
+        req.flash('success','Cập nhật bài hát thành công');
+        res.redirect('back');
+    }catch{
+        req.flash('error', "Lỗi server");
+        res.redirect('back');
+    }
+}
