@@ -57,6 +57,7 @@ block content
         )
       div(
         class="form-group"
+        upload-audio
       )
         label(for="audio") File âm thanh
         input(
@@ -65,12 +66,10 @@ block content
           id="audio"
           name="audio"
           accept="audio/*"
+          upload-audio-input
         )
-        img(
-          src=""
-          class="image-preview"
-          upload-image-preview
-        )
+        audio(controls upload-audio-play)
+          source(src="")
       div(class="form-group")
         label(for="desc") Mô tả
         textarea(

@@ -20,3 +20,20 @@ if(alertSuccess){
         alertSuccess.classList.add('hidden');
     },time)
 }
+
+// Upload Audio
+const uploadAudio = document.querySelector("[upload-audio]");
+if(uploadAudio){
+  console.log('uploadAudio');
+  const uploadAudioInput = uploadAudio.querySelector("[upload-audio-input]");//Lấy ra upload-audio-input
+  const uploadAudioPlay  = uploadAudio.querySelector("[upload-audio-play]");//lấy ra upload-audio-play
+  const source=uploadAudioPlay.querySelector('source');//lấy ra source từ  upload-audio-play
+
+  uploadAudioInput.addEventListener("change", () => {
+    const file = uploadAudioInput.files[0];
+    if(file) {
+      source.src = URL.createObjectURL(file);
+      uploadAudioPlay.load();
+    }
+  });
+}
