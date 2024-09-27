@@ -88,3 +88,17 @@
     display: none;
   }
   /* End Image Preview */
+
+
+  /* Alert */
+.show-alert {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  z-index: 999;
+}
+
+.show-alert.hidden {
+  display: none;
+}
+/* Alert */

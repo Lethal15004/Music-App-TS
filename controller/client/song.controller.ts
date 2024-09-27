@@ -69,7 +69,10 @@ export const detail = async(req: Request, res: Response) =>{
     } catch (error) {
         res.redirect('/topics');
     }
-    const cleanedLyrics = song.lyrics.replace(/\[\d{2}:\d{2}\.\d{2}\]/g, '');
+    let cleanedLyrics=""; 
+    if(song.lyrics){
+        cleanedLyrics = song.lyrics.replace(/\[\d{2}:\d{2}\.\d{2}\]/g, '');
+    }
     res.render('client/pages/songs/detail',{
         title:'Chi tiết bài hát',
         song:song,
