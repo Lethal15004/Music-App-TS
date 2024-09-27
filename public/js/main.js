@@ -20,9 +20,16 @@ if (aplayer) {
     });
     const avatar1 = document.querySelector('.singer-detail .inner-avatar');
     const avatar2 = document.querySelector('.aplayer .aplayer-pic');
+
+    let timeOutListener;
     ap.on('play', function () {
         avatar1.style.animationPlayState = 'running';
         avatar2.style.animationPlayState = 'running';
+    });
+    ap.on('canplay', function () {
+        timeOutListener= ap.duration * 4/5 *1000;
+    });
+    setTimeout(() => {
         setTimeout(() => {
             ap.on('ended', function () {
                 fetch(`/songs/listen/${dataSong._id}`)
@@ -34,8 +41,9 @@ if (aplayer) {
                         }
                     })
             });
-        }, ap.audio.duration * 4 / 5 * 1000);
-    });
+        },timeOutListener);
+    },1000)
+
     ap.on('pause', function () {
         avatar1.style.animationPlayState = 'paused';
         avatar2.style.animationPlayState = 'paused';
